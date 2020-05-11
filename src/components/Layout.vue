@@ -105,7 +105,6 @@ h5 {
 .footer {
   height: 40px;
   color: azure;
-  margin-top: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
