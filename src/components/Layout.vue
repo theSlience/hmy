@@ -107,7 +107,6 @@ h5 {
   margin-top: 20px;
   display: flex;
   justify-content: center;
-  align-items: center;
   background-color: rgba(44, 62, 80, 1);
 }
 </style>
