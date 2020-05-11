@@ -106,7 +106,6 @@ h5 {
   height: 40px;
   color: azure;
   margin-top: 20px;
-  margin-top: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
