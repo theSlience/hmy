@@ -4,8 +4,9 @@
  * @Author: sueRimn
  * @Date: 2020-05-11 10:11:41
  * @LastEditors: sueRimn
- * @LastEditTime: 2020-05-11 13:28:31
+ * @LastEditTime: 2020-05-12 09:22:07
  -->
+ <!-- -->
 <template>
   <div class="header-footer">
     <div class="header">
@@ -28,10 +29,12 @@
         </el-col>
         <el-col :span="16">
           <div class="header-tabs">
-            <div><span>添加文章</span></div>
-            <div><span>修改文章</span></div>
-            <div><span>搜索文章</span></div>
-            <div><span>用户预留信息</span></div>
+            <router-link to="/news">
+              <div><span>热点新闻</span></div>
+            </router-link>
+            <router-link to="/user">
+              <div><span>用户预留信息</span></div>
+            </router-link>
           </div>
         </el-col>
         <el-col :span="4">
@@ -48,17 +51,22 @@
         <router-view></router-view>
       </keep-alive>
     </div>
+    <!-- 
     <div class="footer">
       <div class="footer-record">©2019 环美亚国际教育 版权所有</div>
+      <input placeholder="">
     </div>
+    -->
   </div>
 </template>
 <style scoped>
-
 /* h3和h5标签外边距清零 */
 h3,
 h5 {
   margin: 0px;
+}
+a {
+  text-decoration: none;
 }
 /* 头部宽高以及颜色 */
 .header {
@@ -101,7 +109,7 @@ h5 {
   align-items: center;
   color: rgba(41, 128, 185, 1);
 }
-/* 尾部样式以及垂直居中对齐 */
+/* 尾部样式以及垂直居中对齐 
 .footer {
   height: 40px;
   color: azure;
@@ -111,4 +119,5 @@ h5 {
   align-items: center;
   background-color: rgba(44, 62, 80, 1);
 }
+*/
 </style>
