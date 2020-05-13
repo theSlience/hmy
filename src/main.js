@@ -5,16 +5,16 @@ import Vue from "vue";
 import App from "./App";
 import store from "./store";
 import router from "./router";
-import api from "./api/install";
+import Axios from "axios";
 import Router from "vue-router";
 import ElementUI from "element-ui";
 import Layout from "./components/Layout.vue";
 import "element-ui/lib/theme-chalk/index.css";
 import "font-awesome/css/font-awesome.min.css";
 
-Vue.use(api);
 Vue.use(Router);
 Vue.use(ElementUI);
+Vue.prototype.$axios = Axios;
 
 Vue.config.productionTip = false;
 

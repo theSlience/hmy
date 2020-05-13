@@ -9,12 +9,17 @@ module.exports = {
     // Paths
     assetsSubDirectory: "static",
     assetsPublicPath: "/",
-    // 配置跨域代理
+    // 配置反向代理解决跨域问题
     proxyTable: {
       "/api/": {
-        // 代理本地服务
-        target: "http://localhost:8080/",
-        changeOrigin: true
+        // 调用的接口域名和端口号
+        target: "http://192.168.1.104:8081",
+        // 表示实现跨域
+        changeOrigin: true,
+        pathRewrite: {
+          // /api代替target里面的地址，在组件中使用时调用接口时能直接使用api代替
+          "^/api": "/"
+        }
       }
     },
 
