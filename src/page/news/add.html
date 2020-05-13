@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title>login test</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <script src="jquery-1.11.0.min.js"></script>
+  <title>eee</title>
+</head>
+
+<body>
+
+  <form action="/news/add" method="POST" enctype="multipart/form-data">
+    <p>新闻标题</p><input type="text" id="newsTitle" name="newsTitle" />
+    <input type="file" name="file"><br>
+    <input type="submit" value="上传">
+  </form>
+  <div>
+    <ul id="u">
+    </ul>
+    <script type="text/javascript">
+      $(function () {
+        $.ajax({
+          url: "news/findAll",
+          dateType: "json",
+          success: function (model) {
+            var html = "";
+            $.each(JSON.parse(model), function (index, item) {
+              html += "<li><button type='button' valu='删除' name='" + item.newsId +
+                "' onclick=deleteOne('" + item.newsId + "')>删除</button><div>" + item.newsTitle +
+                "</div><image src=" + "'" + item.img + "'" + "/></li>";
+            });
+            $('#u').html(html);
+
+          },
+          error: function () {
+
+          }
+
+        })
+      })
+
+      function deleteOne(newsId) {
+        alert(newsId);
+        $.ajax({
+          url: "news/deleteOne",
+          data: {
+            newsId,
+            newsId
+          },
+          dateType: "json",
+          success: function (model) {
+            if (model.success.equels("true")) {
+              alert("删除成功");
+              window.reload();
+            }
+          }
+        })
+      }
+
+    </script>
+  </div>
+</body>
+
+</html>

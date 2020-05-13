@@ -8,7 +8,7 @@
  -->
  <!-- -->
 <template>
-  <div class="header-footer">
+  <div class="header-content">
     <div class="header">
       <el-row>
         <el-col :span="4">
@@ -45,6 +45,9 @@
           </div>
         </el-col>
       </el-row>
+    </div>
+    <div class="hr">
+      <hr>
     </div>
     <div class="container">
       <keep-alive>
@@ -108,6 +111,9 @@ a {
   display: flex;
   align-items: center;
   color: rgba(41, 128, 185, 1);
+}
+.hr {
+  margin-top: 20px;
 }
 /* 尾部样式以及垂直居中对齐 
 .footer {

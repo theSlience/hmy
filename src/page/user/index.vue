@@ -7,7 +7,15 @@
  * @LastEditTime: 2020-05-12 09:17:05
  -->
 <template>
-    <div>
-        2222
-    </div>
+
 </template>
+
+<script>
+export default {
+  data() {
+    return {}
+  }
+}
+</script>
+<style scoped>
+</style>
