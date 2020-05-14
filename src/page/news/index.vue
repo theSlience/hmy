@@ -4,7 +4,7 @@
  * @Author: sueRimn
  * @Date: 2020-05-12 09:16:42
  * @LastEditors: sueRimn
- * @LastEditTime: 2020-05-13 10:22:44
+ * @LastEditTime: 2020-05-13 19:31:05
  -->
 <template>
   <div style="display:flex;">
@@ -25,15 +25,15 @@
                       stripe>
               <el-table-column type="selection"
                                width="55px"></el-table-column>
-              <el-table-column prop="time"
+              <el-table-column prop="addTime"
                                label="日期"></el-table-column>
               <el-table-column prop="newsTitle"
                                label="标题"></el-table-column>
-              <el-table-column prop="content"
+              <el-table-column prop="newsContent"
                                label="内容"></el-table-column>
               <el-table-column prop="pic"
                                label="图片"></el-table-column>
-              <el-table-column prop="type"
+              <el-table-column prop="newsType"
                                label="类型"></el-table-column>
               <el-table-column label="操作">
                 <template>
@@ -52,24 +52,38 @@
       </el-row>
       <!-- 添加模态框 -->
       <el-dialog title="添加/修改新闻"
-                 :model="addnews"
                  :visible.sync="dialogVisible"
                  width="30%">
-        <el-form>
+        <el-form ref="newsFrom"
+                 :model="newsForm"
+                 enctype="multipart/form-data">
           <el-form-item label="标题"
-                        prop="title">
-            <el-input v-model="addnews.title"
+                        prop="newsTitle">
+            <el-input v-model="newsForm.newsTitle"
                       autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item label="内容"
-                        prop="content">
-            <el-input v-model="addnews.content"
-                      autocomplete="off"></el-input>
+                        prop="newsContent">
+            <el-input v-model="newsForm.newsContent"
+                      autocomplete="off"
+                      type="textarea"></el-input>
           </el-form-item>
           <el-form-item label="图片"
-                        prop="pic"></el-form-item>
+                        prop="imgUrl">
+            <el-upload class="avatar-uploader"
+                       action="/api/news/add"
+                       :show-file-list="false"
+                       :on-success="handleAvatarUpload"
+                       :before-upload="beforeAvatarUpload">
+              <img v-if="imgUrl"
+                   :src="imgUrl"
+                   class="avatar">
+              <i v-else
+                 class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </el-form-item>
           <el-form-item label="类型"
-                        prop="title">
+                        prop="newsType">
             <el-radio-group>
               <div style="display:flex;">
                 <el-radio border
@@ -84,7 +98,8 @@
         </el-form>
         <span slot="footer">
           <el-button @click="dialogVisible=false">取消</el-button>
-          <el-button type="primary">确定</el-button>
+          <el-button type="primary"
+                     @click="addnews()">确定</el-button>
         </span>
       </el-dialog>
     </div>
@@ -96,31 +111,62 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      addnews: {
-        title: null,
-        content: null,
-        img: null,
-        type: null
+      news: [],
+      newsForm: {
+        newsTitle: '',
+        newsContent: '',
+        imgUrl: ''
       },
-      news: []
+      imgUrl: ''
     }
   },
+  //   页面初始化需要进行数据渲染
+  created() {
+    this.getnews()
+  },
   methods: {
-    // 点击添加新闻打开模态框
+    // 点击添加新闻按钮打开模态框
     opendialogVisible() {
-      ;(this.addnews = {
-        title: null,
-        content: null,
-        img: null,
-        type: null
-      }),
-        (this.dialogVisible = true)
+      //   ;(this.addnews = {
+      //     newsTitle: null,
+      //     newsContent: null
+      //   }),
+      this.dialogVisible = true
     },
+    // 获取后台新闻数据
     getnews() {
-      this.$axios.get('/api/news/findAll').then(res => {
-          this.news=res.data;
-          console.log(res.data)
-      })
+      this.$axios
+        .get('/api/news/findAll')
+        .then(res => {
+          this.news = res.data.list
+        })
+        .catch(err => {})
+    },
+    // 提交增加新闻表单
+    addnews() {
+      let newsList = this.newsForm
+      let { newsTitle, newsContent } = newsList
+      // 判断数据是否为空
+      if (newsTitle == '' || newsContent == '') {
+        this.message.error('新增内容每一项不能为空！')
+      } else {
+        this.$axios.post('/api/news/add', this.newsForm).then(res => {})
+      }
+    },
+    handleAvatarUpload(res, file) {
+      this.imgUrl = URL.createObjectURL(file.raw)
+    },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === 'image/jpeg'
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+      }
+      return isJPG && isLt2M
     }
   }
 }
@@ -139,5 +185,37 @@ export default {
 }
 .el-table--enable-row-transition .el-table__body td {
   text-align: center;
+}
+.el-dialog__header {
+  padding: 10px 20px 0px;
+}
+.el-dialog__body {
+  padding: 10px 20px;
+}
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 100px;
+  height: 100px;
+  line-height: 100px;
+  text-align: center;
+}
+.avatar {
+  width: 100px;
+  height: 100px;
+  display: block;
+}
+.el-form-item__content {
+  line-height: 0px;
 }
 </style>
