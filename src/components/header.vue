@@ -8,60 +8,62 @@
  -->
  <!-- -->
 <template>
-  <div class="header-content">
-    <div class="header">
-      <el-row>
-        <el-col :span="4">
-          <div class="header-logo">
-            <div>
-              <img src="../assets/logo.png"
-                   alt="">
+  <header>
+    <div class="header-content">
+      <div class="header">
+        <el-row>
+          <el-col :span="4">
+            <div class="header-logo">
+              <div>
+                <img src="../assets/logo.png"
+                     alt="">
+              </div>
+              <div>
+                <h3>
+                  环美亚后台
+                </h3>
+                <h5>
+                  hmyedu.com
+                </h5>
+              </div>
             </div>
-            <div>
-              <h3>
-                环美亚后台
-              </h3>
-              <h5>
-                hmyedu.com
-              </h5>
+          </el-col>
+          <el-col :span="16">
+            <div class="header-tabs">
+              <router-link to="/news">
+                <div><span>热点新闻</span></div>
+              </router-link>
+              <router-link to="/user">
+                <div><span>用户预留信息</span></div>
+              </router-link>
             </div>
-          </div>
-        </el-col>
-        <el-col :span="16">
-          <div class="header-tabs">
-            <router-link to="/news">
-              <div><span>热点新闻</span></div>
-            </router-link>
-            <router-link to="/user">
-              <div><span>用户预留信息</span></div>
-            </router-link>
-          </div>
-        </el-col>
-        <el-col :span="4">
-          <div class="header-account">
-            <a href="#"
-               @click.prevent="logout">
-              退出账户
-            </a>
-          </div>
-        </el-col>
-      </el-row>
-    </div>
-    <div class="hr">
-      <hr>
-    </div>
-    <div class="container">
-      <keep-alive>
-        <router-view></router-view>
-      </keep-alive>
-    </div>
-    <!-- 
+          </el-col>
+          <el-col :span="4">
+            <div class="header-account">
+              <a href="#"
+                 @click.prevent="logout">
+                退出账户
+              </a>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+      <div class="hr">
+        <hr>
+      </div>
+      <div class="container">
+        <keep-alive>
+          <router-view></router-view>
+        </keep-alive>
+      </div>
+      <!-- 
     <div class="footer">
       <div class="footer-record">©2019 环美亚国际教育 版权所有</div>
       <input placeholder="">
     </div>
     -->
-  </div>
+    </div>
+  </header>
 </template>
 <script>
 import { constants } from 'crypto'

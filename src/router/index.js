@@ -25,12 +25,11 @@ export default new Router({
     {
       path: "/",
       // 重定向，页面进入时进入news页面
-      name: "Login",
       component: Login
     },
     {
       path: "/login",
-      name: 'Login',
+      name: "Login",
       component: Login
     }
   ]
