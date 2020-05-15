@@ -8,6 +8,7 @@
  -->
 <template>
   <div style="display:flex;">
+    <my-header></my-header>
     <div class="content">
       <el-row>
         <el-col :span="16">
@@ -31,10 +32,18 @@
                                label="标题"></el-table-column>
               <el-table-column prop="newsContent"
                                label="内容"></el-table-column>
-              <el-table-column prop="pic"
-                               label="图片"></el-table-column>
+              <el-table-column label="图片">
+                <template slot-scope="scope">
+                  <img :src="scope.row.img"
+                       style="width: 100px;height:50px"></template>
+              </el-table-column>
               <el-table-column prop="newsType"
-                               label="类型"></el-table-column>
+                               label="类型">
+                <template slot-scope="scope">
+                  <el-tag :type="scope.row.newsType == '1' ? '' : scope.row.newsType== '2'?'danger':'success'">{{scope.row.newsType== '1' ? "热点新闻" :scope.row.newsType==
+            '2'?"官方报道":"校区活动"}}</el-tag>
+                </template>
+              </el-table-column>
               <el-table-column label="操作">
                 <template>
                   <div style="display:flex;">
@@ -107,6 +116,7 @@
 </template>
 <script>
 import axios from 'axios'
+import myHeader from ''
 export default {
   data() {
     return {
@@ -114,9 +124,9 @@ export default {
       news: [],
       newsForm: {
         newsTitle: '',
-        newsContent: '',
-        imgUrl: ''
+        newsContent: ''
       },
+      img: '',
       imgUrl: ''
     }
   },
@@ -141,6 +151,15 @@ export default {
           this.news = res.data.list
         })
         .catch(err => {})
+    },
+    newstype(newsType) {
+      if (newsType === 1) {
+        return '热点新闻'
+      } else if (newsType === 2) {
+        return '官方报道'
+      } else if (newsType === 3) {
+        return '校区活动'
+      }
     },
     // 提交增加新闻表单
     addnews() {

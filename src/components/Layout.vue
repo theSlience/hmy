@@ -39,9 +39,10 @@
         </el-col>
         <el-col :span="4">
           <div class="header-account">
-            <span>
+            <a href="#"
+               @click.prevent="logout">
               退出账户
-            </span>
+            </a>
           </div>
         </el-col>
       </el-row>
@@ -62,6 +63,42 @@
     -->
   </div>
 </template>
+<script>
+import { constants } from 'crypto'
+export default {
+  data() {
+    return {}
+  },
+  methods: {
+    // 退出功能
+    logout() {
+      // 弹出确认对话框
+      // 点击确认后，跳回用户登录页面，清除token
+      this.$confirm('请确认退出？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.$message({
+            type: 'success',
+            message: '退出成功'
+          })
+          // 确认退出，清除token
+          localStorage.removeItem('token')
+          // 跳转登录页面
+          this.$router.push('/login')
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消退出'
+          })
+        })
+    }
+  }
+}
+</script>
 <style scoped>
 /* h3和h5标签外边距清零 */
 h3,

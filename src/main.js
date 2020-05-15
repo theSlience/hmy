@@ -8,7 +8,7 @@ import router from "./router";
 import Axios from "axios";
 import Router from "vue-router";
 import ElementUI from "element-ui";
-import Layout from "./components/Layout.vue";
+// import Layout from "./components/Layout.vue";
 import "element-ui/lib/theme-chalk/index.css";
 import "font-awesome/css/font-awesome.min.css";
 
@@ -22,7 +22,8 @@ Vue.config.productionTip = false;
 new Vue({
   el: "#app",
   store,
+  // 启用路由
   router,
-  components: { Layout },
-  template: "<Layout/>"
+  components: { App },
+  template: "<App/>"
 });
