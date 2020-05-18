@@ -1,12 +1,3 @@
-<!--
- * @Descripttion: 
- * @version: 
- * @Author: sueRimn
- * @Date: 2020-05-11 10:11:41
- * @LastEditors: sueRimn
- * @LastEditTime: 2020-05-12 09:22:07
- -->
- <!-- -->
 <template>
   <header>
     <div class="header-content">
@@ -102,6 +93,9 @@ export default {
 }
 </script>
 <style scoped>
+.el-col-16 {
+  display: flex;
+}
 /* h3和h5标签外边距清零 */
 h3,
 h5 {
@@ -151,18 +145,10 @@ a {
   align-items: center;
   color: rgba(41, 128, 185, 1);
 }
+.header-account a {
+  color: #000;
+}
 .hr {
   margin-top: 20px;
 }
-/* 尾部样式以及垂直居中对齐 
-.footer {
-  height: 40px;
-  color: azure;
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(44, 62, 80, 1);
-}
-*/
 </style>

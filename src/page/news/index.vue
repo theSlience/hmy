@@ -4,7 +4,7 @@
  * @Author: sueRimn
  * @Date: 2020-05-12 09:16:42
  * @LastEditors: sueRimn
- * @LastEditTime: 2020-05-15 13:44:04
+ * @LastEditTime: 2020-05-16 17:13:58
  -->
 <template>
   <div>
@@ -46,13 +46,14 @@
                   </template>
                 </el-table-column>
                 <el-table-column label="操作">
-                  <template>
+                  <template slot-scope="news">
                     <div style="display:flex;">
                       <el-button icon="el-icon-edit"
                                  size="medium">编辑</el-button>
                       <el-button type="danger"
                                  size="medium"
-                                 icon="el-icon-delete">删除</el-button>
+                                 icon="el-icon-delete"
+                                 @click.native.prevent="handleDelete(news.row.newsId)">删除</el-button>
                     </div>
                   </template>
                 </el-table-column>
@@ -145,19 +146,18 @@ export default {
   },
   //   页面初始化需要进行数据渲染
   created() {
-    this.getnews()
+    this.getNews()
+  },
+  mounted() {
+    this.getNews()
   },
   methods: {
     // 点击添加新闻按钮打开模态框
     opendialogVisible() {
-      //   ;(this.addnews = {
-      //     newsTitle: null,
-      //     newsContent: null
-      //   }),
       this.dialogVisible = true
     },
     // 获取后台新闻数据
-    getnews() {
+    getNews() {
       this.$axios
         .get('/api/news/findAll')
         .then(res => {
@@ -174,12 +174,14 @@ export default {
         return '校区活动'
       }
     },
-    // 提交增加新闻表单
     submitForm(formName) {
       let vm = this
       this.$refs[formName].validate(valid => {
         if (valid) {
           vm.$refs.upload.submit()
+          this.$message.success('添加成功')
+          this.dialogVisible = false
+          this.getNews()
         } else {
           return false
         }
@@ -190,20 +192,51 @@ export default {
     },
     beforeAvatarUpload(file) {
       const isJPG = file.type === 'image/jpeg'
-      const isLt2M = file.size / 1024 / 1024 < 2
-
+      const isLt4M = file.size / 1024 / 1024 < 4
       if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!')
+        this.$message.error('上传新闻图片只能是 JPG 格式!')
       }
-      if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
+      if (!isLt4M) {
+        this.$message.error('上传新闻图片大小不能超过 4MB!')
       }
-      return isJPG && isLt2M
+      return isJPG && isLt4M
+    },
+    // 删除操作
+    //根据newsId删除新闻
+    async handleDelete(newsId) {
+      console.log(newsId)
+      const confirmResult = await this.$confirm('是否删除此条新闻？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err)
+
+      // console.log(confirmResult);
+      // 确认删除则返回字符串 confirm
+      // 取消返回 cancel
+
+      if (confirmResult !== 'confirm') {
+        return this.$message.info('已取消删除')
+      }
+
+      const { data: res } = await this.$axios
+        .delete('/api/news/deleteOne/' + newsId)
+        .then(res => {
+          if (this.success == true) {
+            return this.$message.error('删除用户失败')
+          }
+          this.$message.success('删除用户成功')
+          // 刷新列表
+          this.getNews()
+        })
     }
   }
 }
 </script>
 <style scopd>
+.el-col-16 {
+  display: flex;
+}
 .content {
   width: 1300px;
   height: 100%;
@@ -249,5 +282,6 @@ export default {
 }
 .el-form-item__content {
   line-height: 0px;
+  text-align: left;
 }
 </style>

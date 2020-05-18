@@ -1,24 +1,24 @@
 <template>
   <div id="login">
     <div class="loginToHome">
-      <el-form ref="form"
-               :model="form"
+      <el-form ref="loginForm"
+               :model="loginForm"
                :rules="ruleForm"
                status-icon
                label-width="80px"
                class="loginForm">
         <h3>登陆</h3>
         <el-form-item label="用户名"
-                      prop="name">
+                      prop="userName">
           <el-input type="text"
-                    v-model="form.name"
+                    v-model="loginForm.userName"
                     auto-complete="off"
                     placeholder="请输入用户名"></el-input>
         </el-form-item>
         <el-form-item label="密码"
-                      prop="password">
+                      prop="userPwd">
           <el-input type="password"
-                    v-model="form.password"
+                    v-model="loginForm.userPwd"
                     auto-complete="off"
                     placeholder="请输入密码"></el-input>
         </el-form-item>
@@ -26,7 +26,7 @@
           <el-button class="homeBut"
                      type="primary"
                      plain
-                     @click="submit"
+                     @click="login"
                      :loading="logining">登录</el-button>
           <el-button class="loginBut"
                      type="primary"
@@ -39,40 +39,49 @@
   </div>
 </template>
 <script>
+// import { myLogin } from '../service/index.js'
+import axios from 'axios'
 export default {
   data() {
     return {
       logining: false,
-      form: {
-        name: 'admin',
-        password: '123456'
+      loginForm: {
+        userName: '',
+        userPwd: ''
       },
       ruleForm: {
-        name: [{ required: true, message: '请输入账号', trigger: 'blur' }],
-        password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
+        userName: [{ required: true, message: '请输入账号', trigger: 'blur' }],
+        userPwd: [{ required: true, message: '请输入密码', trigger: 'blur' }]
       }
     }
   },
   methods: {
-    submit(event) {
-      this.$refs.form.validate(valid => {
-        if (valid) {
-          this.logining = true
-          if (this.form.name === 'admin' && this.form.password === '123456') {
-            this.logining = true
-            sessionStorage.setItem('user', this.form.name)
-            this.$router.push("/news")
-          } else {
-            this.logining = false
-            this.$alert('name or password wrong!', 'info', {
-              confirmButtonText: 'ok'
-            })
-          }
-        } else {
-          console.log('error submit!')
-          return false
-        }
-      })
+    login() {
+      this.$axios
+        .post('/api/user/login')
+        .then(res => {
+          this.$router.push('/news')
+          //   this.news = res.data.list
+        })
+        .catch(err => {})
+      //   this.$refs.form.validate(valid => {
+      //     if (valid) {
+      //       this.logining = true
+      //       if (this.form.name === 'admin' && this.form.password === '123456') {
+      //         this.logining = true
+      //         sessionStorage.setItem('user', this.form.name)
+      //         this.$router.push('/news')
+      //       } else {
+      //         this.logining = false
+      //         this.$alert('name or password wrong!', 'info', {
+      //           confirmButtonText: 'ok'
+      //         })
+      //       }
+      //     } else {
+      //       console.log('error submit!')
+      //       return false
+      //     }
+      //   })
     },
     resetForm() {
       this.$refs.form.resetFields()
