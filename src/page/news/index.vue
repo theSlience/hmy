@@ -49,7 +49,8 @@
                   <template slot-scope="news">
                     <div style="display:flex;">
                       <el-button icon="el-icon-edit"
-                                 size="medium">编辑</el-button>
+                                 size="medium"
+                                 @click="handleEdit(news.$index,news.row)">编辑</el-button>
                       <el-button type="danger"
                                  size="medium"
                                  icon="el-icon-delete"
@@ -61,7 +62,15 @@
             </template>
           </el-col>
         </el-row>
-        <!-- 添加模态框 -->
+        <!-- 分页功能 -->
+        <el-pagination background
+                       layout="total,prev, pager, next"
+                       :total="page.total"
+                       :current-page="page.pageNum"
+                       :page-size="page.pageSize"
+                       @current-change="currentChange">
+        </el-pagination>
+        <!-- 添加新闻模态框 -->
         <el-dialog title="添加/修改新闻"
                    :visible.sync="dialogVisible"
                    width="30%">
@@ -114,6 +123,41 @@
                        @click="submitForm('newsForm')">确定</el-button>
           </span>
         </el-dialog>
+        <!-- 编辑新闻模态框 -->
+        <el-dialog title="编辑新闻"
+                   :visible.sync="editFormVisible"
+                   :close-on-click-modal="false">
+          <el-form :model="editForm"
+                   ref="editForm">
+            <el-form-item prop="newsId"></el-form-item>
+            <el-form-item label="标题"
+                          prop="newsTitle">
+              <el-input v-model="editForm.newsTitle"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="内容"
+                          prop="newsContent">
+              <el-input v-model="editForm.newsContent"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <!-- <el-form-item label="图片"
+                          prop="file"
+                          type="file">
+              <el-upload class="avatar-uploader"
+                         action="/api/news/update"
+                         :auto-upload="false"
+                         ref=""></el-upload>
+            </el-form-item> -->
+            <!-- <el-form-item>
+              <el-input ></el-input>
+            </el-form-item> -->
+          </el-form>
+          <span slot="footer">
+            <el-button @click.native.prevent="handleCancel('editForm')">取消</el-button>
+            <el-button type="primary"
+                       @click.native.prevent="handleUpdate('editForm')">更新</el-button>
+          </span>
+        </el-dialog>
       </div>
     </div>
   </div>
@@ -125,20 +169,32 @@ export default {
   data() {
     return {
       dialogVisible: false,
+      editFormVisible: false,
       news: [],
+      img: '',
+      imgUrl: '',
       newsForm: {
         newsTitle: '',
         newsContent: '',
         imgUrl: '',
         newsType: ''
       },
+      // 编辑模态框
+      editForm: {
+        newsTitle: '',
+        newsContent: ''
+      },
       newsTypeOptions: [
         { newsType: 1, Text: '热点新闻' },
         { newsType: 2, Text: '官方报道' },
         { newsType: 3, Text: '校区活动' }
       ],
-      img: '',
-      imgUrl: ''
+      // 分页数据
+      page: {
+        pageNum: 1,
+        total: 0,
+        pageSize: 6
+      }
     }
   },
   components: {
@@ -148,22 +204,27 @@ export default {
   created() {
     this.getNews()
   },
-  mounted() {
-    this.getNews()
-  },
   methods: {
     // 点击添加新闻按钮打开模态框
     opendialogVisible() {
       this.dialogVisible = true
     },
     // 获取后台新闻数据
-    getNews() {
+    getNews(pageNum) {
       this.$axios
-        .get('/api/news/findAll')
+        .get('/api/news/findAll/' + this.page.pageNum)
         .then(res => {
           this.news = res.data.list
+          this.page.total = res.data.total
+          //   this.$set(this.page, 'total', res.data.total)
+          //   this.$set(this.page, 'pageSize', res.data.pageSize)
+          //   this.$set(this.page, 'pageNum', res.data.pageNum)
         })
         .catch(err => {})
+    },
+    currentChange(pageNum) {
+      this.page.pageNum = pageNum
+      //   this.getNews()
     },
     newstype(newsType) {
       if (newsType === 1) {
@@ -204,21 +265,16 @@ export default {
     // 删除操作
     //根据newsId删除新闻
     async handleDelete(newsId) {
-      console.log(newsId)
       const confirmResult = await this.$confirm('是否删除此条新闻？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).catch(err => err)
-
-      // console.log(confirmResult);
       // 确认删除则返回字符串 confirm
       // 取消返回 cancel
-
       if (confirmResult !== 'confirm') {
         return this.$message.info('已取消删除')
       }
-
       const { data: res } = await this.$axios
         .delete('/api/news/deleteOne/' + newsId)
         .then(res => {
@@ -229,6 +285,25 @@ export default {
           // 刷新列表
           this.getNews()
         })
+    },
+    // 编辑按钮
+    handleEdit(index, row) {
+      this.editFormVisible = true
+      this.editForm = Object.assign({}, row)
+      this.editForm.index = index
+    },
+    handleCancel(formName) {
+      this.editFormVisible = false
+    },
+    handleUpdate(newsId) {
+      console.log(this.newsId)
+      this.$axios.post('/api/news/update').then(res => {
+        this.$set(this.newsForm, this.editForm.index, {
+          newsTitle: this.editForm.newsTitle,
+          newsContent: this.editForm.newsContent
+        })
+        this.editFormVisible = false
+      })
     }
   }
 }
@@ -283,5 +358,12 @@ export default {
 .el-form-item__content {
   line-height: 0px;
   text-align: left;
+}
+.el-pagination {
+  padding: 2px 0px;
+  text-align: right;
+}
+.el-pagination.is-background .btn-next {
+  margin: 0px;
 }
 </style>

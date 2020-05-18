@@ -12,47 +12,32 @@
     <div style="display:flex;">
       <div class="content">
         <el-row>
-          <el-col :span="16">
-            <el-button @click="opendialogVisible()"
-                       icon="el-icon-plus">
-              添加新闻
-            </el-button>
-          </el-col>
-        </el-row>
-        <el-row>
           <el-col>
             <template>
-              <el-table :data="news"
+              <el-table :data="msg"
                         style="width:100%"
                         stripe>
-                <el-table-column type="selection"
-                                 width="55px"></el-table-column>
+                <el-table-column prop="msgName"
+                                 label="姓名"></el-table-column>
+                <el-table-column prop="msgPhone"
+                                 label="电话"></el-table-column>
+                <div onmouseover="this.className='.show'"
+                     onmouseout="this.className='.cell'">
+                  <el-table-column prop="msgContent"
+                                   label="内容">
+                  </el-table-column>
+                </div>
+                <el-table-column prop="msgEmail"
+                                 label="邮箱"></el-table-column>
                 <el-table-column prop="addTime"
-                                 label="日期"></el-table-column>
-                <el-table-column prop="newsTitle"
-                                 label="标题"></el-table-column>
-                <el-table-column prop="newsContent"
-                                 label="内容"></el-table-column>
-                <el-table-column label="图片">
-                  <template slot-scope="scope">
-                    <img :src="scope.row.img"
-                         style="width: 100px;height:50px"></template>
-                </el-table-column>
-                <el-table-column prop="newsType"
-                                 label="类型">
-                  <template slot-scope="scope">
-                    <el-tag :type="scope.row.newsType == '1' ? '' : scope.row.newsType== '2'?'danger':'success'">{{scope.row.newsType== '1' ? "热点新闻" :scope.row.newsType==
-            '2'?"官方报道":"校区活动"}}</el-tag>
-                  </template>
-                </el-table-column>
+                                 label="预留时间"></el-table-column>
                 <el-table-column label="操作">
-                  <template>
-                    <div style="display:flex;">
-                      <el-button icon="el-icon-edit"
-                                 size="medium">编辑</el-button>
+                  <template slot-scope="msg">
+                    <div>
                       <el-button type="danger"
                                  size="medium"
-                                 icon="el-icon-delete">删除</el-button>
+                                 icon="el-icon-delete"
+                                 @click.native.prevent="handleDelete(msg.row.msgId)">删除</el-button>
                     </div>
                   </template>
                 </el-table-column>
@@ -60,59 +45,14 @@
             </template>
           </el-col>
         </el-row>
-        <!-- 添加模态框 -->
-        <el-dialog title="添加/修改新闻"
-                   :visible.sync="dialogVisible"
-                   width="30%">
-          <el-form ref="newsForm"
-                   :model="newsForm"
-                   enctype="multipart/form-data">
-            <el-form-item label="标题"
-                          prop="newsTitle">
-              <el-input v-model="newsForm.newsTitle"
-                        autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="内容"
-                          prop="newsContent">
-              <el-input v-model="newsForm.newsContent"
-                        autocomplete="off"
-                        type="textarea"></el-input>
-            </el-form-item>
-            <el-form-item label="图片"
-                          prop="file"
-                          type="file">
-              <el-upload class="avatar-uploader"
-                         action="/api/news/add"
-                         :auto-upload="false"
-                         ref="upload"
-                         :data="newsForm"
-                         :on-success="handleAvatarUpload"
-                         :before-upload="beforeAvatarUpload">
-                <img v-if="newsForm.imgUrl"
-                     :src="newsForm.imgUrl"
-                     class="avatar">
-                <i v-else
-                   class="el-icon-plus avatar-uploader-icon"></i>
-              </el-upload>
-            </el-form-item>
-            <el-form-item label="类型"
-                          prop="newsType">
-              <el-radio-group v-model="newsForm.newsType">
-                <div style="display:flex;">
-                  <el-radio border
-                            v-for="item in newsTypeOptions"
-                            :key="item.newsType"
-                            :label="item.newsType">{{item.Text}}</el-radio>
-                </div>
-              </el-radio-group>
-            </el-form-item>
-          </el-form>
-          <span slot="footer">
-            <el-button @click="dialogVisible=false">取消</el-button>
-            <el-button type="primary"
-                       @click="submitForm('newsForm')">确定</el-button>
-          </span>
-        </el-dialog>
+        <!-- 分页功能 -->
+        <el-pagination background
+                       layout="total,prev, pager, next"
+                       :total="page.total"
+                       :current-page="page.pageNum"
+                       :page-size="page.pageSize"
+                       @current-change="currentChange">
+        </el-pagination>
       </div>
     </div>
   </div>
@@ -123,21 +63,12 @@ import myHeader from '../../components/header'
 export default {
   data() {
     return {
-      dialogVisible: false,
-      news: [],
-      newsForm: {
-        newsTitle: '',
-        newsContent: '',
-        imgUrl: '',
-        newsType: ''
-      },
-      newsTypeOptions: [
-        { newsType: 1, Text: '热点新闻' },
-        { newsType: 2, Text: '官方报道' },
-        { newsType: 3, Text: '校区活动' }
-      ],
-      img: '',
-      imgUrl: ''
+      msg: [],
+      page: {
+        pageNum: 1,
+        total: 0,
+        pageSize: 10
+      }
     }
   },
   components: {
@@ -145,60 +76,49 @@ export default {
   },
   //   页面初始化需要进行数据渲染
   created() {
-    this.getnews()
+    this.getMsg()
   },
   methods: {
-    // 点击添加新闻按钮打开模态框
-    opendialogVisible() {
-      //   ;(this.addnews = {
-      //     newsTitle: null,
-      //     newsContent: null
-      //   }),
-      this.dialogVisible = true
-    },
-    // 获取后台新闻数据
-    getnews() {
+    // 获取后台用戶数据
+    getMsg(pageNum) {
       this.$axios
-        .get('/api/news/findAll')
+        .get('/api/message/findAll/' + this.page.pageNum)
         .then(res => {
-          this.news = res.data.list
+          this.msg = res.data.list
+          
         })
         .catch(err => {})
     },
-    newstype(newsType) {
-      if (newsType === 1) {
-        return '热点新闻'
-      } else if (newsType === 2) {
-        return '官方报道'
-      } else if (newsType === 3) {
-        return '校区活动'
-      }
+    currentChange(pageNum) {
+      this.page.pageNum = pageNum
+      this.getMsg()
     },
-    // 提交增加新闻表单
-    submitForm(formName) {
-      let vm = this
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          vm.$refs.upload.submit()
-        } else {
-          return false
-        }
-      })
-    },
-    handleAvatarUpload(res, file) {
-      this.imgUrl = URL.createObjectURL(file.raw)
-    },
-    beforeAvatarUpload(file) {
-      const isJPG = file.type === 'image/jpeg'
-      const isLt2M = file.size / 1024 / 1024 < 2
-
-      if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!')
+    // 删除操作
+    //根据msgId删除用戶信息
+    async handleDelete(msgId) {
+      const confirmResult = await this.$confirm('是否删除此条新闻？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err)
+      // 确认删除则返回字符串 confirm
+      // 取消返回 cancel
+      if (confirmResult !== 'confirm') {
+        return this.$message.info('已取消删除')
       }
-      if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
-      }
-      return isJPG && isLt2M
+      const { data: res } = await this.$axios
+        .delete('/api/message/deleteOne/' + msgId)
+        .then(res => {
+          if (this.success == true) {
+            return this.$message.error('删除用户信息失败')
+          }
+          this.$message.success('删除用户信息成功')
+          // 刷新列表
+          this.getMsg()
+        })
+    },
+    mounted() {
+      this.getMsg()
     }
   }
 }
@@ -217,6 +137,10 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.el-table .cell:hover {
+  overflow: auto;
+  text-overflow: clip;
 }
 .el-table--enable-row-transition .el-table__body td {
   text-align: center;
@@ -253,5 +177,12 @@ export default {
 .el-form-item__content {
   line-height: 0px;
   text-align: left;
+}
+.el-pagination {
+  padding: 2px 0px;
+  text-align: right;
+}
+.el-pagination.is-background .btn-next {
+  margin: 0px;
 }
 </style>
