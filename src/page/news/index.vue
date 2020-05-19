@@ -4,7 +4,7 @@
  * @Author: sueRimn
  * @Date: 2020-05-12 09:16:42
  * @LastEditors: sueRimn
- * @LastEditTime: 2020-05-16 17:13:58
+ * @LastEditTime: 2020-05-19 15:15:00
  -->
 <template>
   <div>
@@ -126,7 +126,8 @@
         <!-- 编辑新闻模态框 -->
         <el-dialog title="编辑新闻"
                    :visible.sync="editFormVisible"
-                   :close-on-click-modal="false">
+                   :close-on-click-modal="false"
+                   width="30%">
           <el-form :model="editForm"
                    ref="editForm">
             <el-form-item prop="newsId"></el-form-item>
@@ -138,19 +139,26 @@
             <el-form-item label="内容"
                           prop="newsContent">
               <el-input v-model="editForm.newsContent"
-                        autocomplete="off"></el-input>
+                        autocomplete="off"
+                        type="textarea"></el-input>
             </el-form-item>
-            <!-- <el-form-item label="图片"
+            <el-form-item label="图片"
                           prop="file"
                           type="file">
               <el-upload class="avatar-uploader"
                          action="/api/news/update"
                          :auto-upload="false"
-                         ref=""></el-upload>
-            </el-form-item> -->
-            <!-- <el-form-item>
-              <el-input ></el-input>
-            </el-form-item> -->
+                         ref="upload"
+                         :data="editForm"
+                         :on-success="handleAvatarUpload"
+                         :before-upload="beforeAvatarUpload">
+                <img v-if="editForm.img"
+                     :src="editForm.img"
+                     class="avatar">
+                <i v-else
+                   class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+            </el-form-item>
           </el-form>
           <span slot="footer">
             <el-button @click.native.prevent="handleCancel('editForm')">取消</el-button>
@@ -224,7 +232,7 @@ export default {
     },
     currentChange(pageNum) {
       this.page.pageNum = pageNum
-      //   this.getNews()
+      this.getNews()
     },
     newstype(newsType) {
       if (newsType === 1) {
@@ -295,14 +303,35 @@ export default {
     handleCancel(formName) {
       this.editFormVisible = false
     },
-    handleUpdate(newsId) {
-      console.log(this.newsId)
-      this.$axios.post('/api/news/update').then(res => {
-        this.$set(this.newsForm, this.editForm.index, {
-          newsTitle: this.editForm.newsTitle,
-          newsContent: this.editForm.newsContent
-        })
-        this.editFormVisible = false
+    // 编辑完后点击确认提交数据
+    handleUpdate(formName) {
+      // 定义数据
+      let data = {
+        newsId: this.editForm.newsId,
+        newsTitle: this.editForm.newsTitle,
+        newsContent: this.editForm.newsContent,
+        file: this.editForm.file
+      }
+      //   this.$axios
+      //     .post('/api/news/update', this.$qs.stringify(data))
+      //     .then(res => {
+      //       this.$message.success('编辑成功')
+      //       console.log(this.editForm.newsId),
+      //         console.log(this.editForm.file),
+      //         (this.editFormVisible = false)
+      //       this.getNews()
+      //     })
+      //     .catch(err => {})
+      let vm = this
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          vm.$refs.upload.submit()
+          this.$message.success('编辑成功')
+          this.editFormVisible = false
+          this.getNews()
+        } else {
+          return false
+        }
       })
     }
   }
