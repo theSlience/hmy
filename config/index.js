@@ -6,26 +6,28 @@ const path = require("path");
 
 module.exports = {
   dev: {
+    env: require("./dev.env"),
+    autoOpenBrowser: true,
     // Paths
     assetsSubDirectory: "static",
-    assetsPublicPath: "/",
+    assetsPublicPath: "/admin/",
     // 配置反向代理解决跨域问题
     proxyTable: {
-      "/api/": {
-        // 调用的接口域名和端口号
-        target: "http://192.168.1.106:8081",
-        // 表示实现跨域
-        changeOrigin: true,
-        pathRewrite: {
-          // /api代替target里面的地址，在组件中使用时调用接口时能直接使用api代替
-          "^/api": "/"
+        "/api/": {
+          // 调用的接口域名和端口号
+          target: "http://47.114.160.53:8081",
+          // 表示实现跨域
+          changeOrigin: true,
+          pathRewrite: {
+            // /api代替target里面的地址，在组件中使用时调用接口时能直接使用api代替
+            "^/api": "/"
+          }
         }
-      }
     },
 
     // Various Dev Server settings
-    host: "localhost", // can be overwritten by process.env.HOST
-    port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    host: "192.168.1.102", // can be overwritten by process.env.HOST
+    port: 8082, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,
     errorOverlay: true,
     notifyOnErrors: true,
@@ -61,7 +63,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, "../dist"),
     assetsSubDirectory: "static",
-    assetsPublicPath: "/",
+    assetsPublicPath: "/admin/",
 
     /**
      * Source Maps
