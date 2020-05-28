@@ -10,8 +10,6 @@ import VueRouter from "vue-router";
 Vue.use(Router);
 
 export default new Router({
-  mode: "history",
-  base: "/admin/",
   routes: [
     {
       // path:浏览器访问显示路径，component：对应的组件名称

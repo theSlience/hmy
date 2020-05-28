@@ -4,7 +4,7 @@
  * @Author: sueRimn
  * @Date: 2020-05-12 09:16:42
  * @LastEditors: sueRimn
- * @LastEditTime: 2020-05-19 15:15:00
+ * @LastEditTime: 2020-05-23 14:16:02
  -->
 <template>
   <div>
@@ -205,6 +205,7 @@ export default {
       }
     }
   },
+  // 引入头部组件
   components: {
     myHeader
   },
@@ -224,9 +225,6 @@ export default {
         .then(res => {
           this.news = res.data.list
           this.page.total = res.data.total
-          //   this.$set(this.page, 'total', res.data.total)
-          //   this.$set(this.page, 'pageSize', res.data.pageSize)
-          //   this.$set(this.page, 'pageNum', res.data.pageNum)
         })
         .catch(err => {})
     },
@@ -260,15 +258,15 @@ export default {
       this.imgUrl = URL.createObjectURL(file.raw)
     },
     beforeAvatarUpload(file) {
-      const isJPG = file.type === 'image/jpeg'
+      //   const isJPG = file.type === 'image/jpeg'
       const isLt4M = file.size / 1024 / 1024 < 4
-      if (!isJPG) {
-        this.$message.error('上传新闻图片只能是 JPG 格式!')
-      }
+      //   if (!isJPG) {
+      //     this.$message.error('上传新闻图片只能是 JPG 格式!')
+      //   }
       if (!isLt4M) {
         this.$message.error('上传新闻图片大小不能超过 4MB!')
       }
-      return isJPG && isLt4M
+      return isLt4M
     },
     // 删除操作
     //根据newsId删除新闻
@@ -394,5 +392,8 @@ export default {
 }
 .el-pagination.is-background .btn-next {
   margin: 0px;
+}
+.el-radio.is-bordered {
+  margin-right: 0px;
 }
 </style>
