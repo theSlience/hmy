@@ -65,6 +65,8 @@ export default {
   methods: {
     // 退出功能
     logout() {
+      this.$axios
+        .post('/api/user/logout')
       // 弹出确认对话框
       // 点击确认后，跳回用户登录页面，清除token
       this.$confirm('请确认退出？', '提示', {

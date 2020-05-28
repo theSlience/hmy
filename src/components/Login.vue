@@ -26,7 +26,7 @@
           <el-button class="homeBut"
                      type="primary"
                      plain
-                     @click="login"
+                     @click="login(loginForm)"
                      :loading="logining">登录</el-button>
           <el-button class="loginBut"
                      type="primary"
@@ -56,32 +56,22 @@ export default {
     }
   },
   methods: {
-    login() {
+    login(loginForm) {
+      const that = this;
       this.$axios
-        .post('/api/user/login')
+        .post('/api/user/login',loginForm)
         .then(res => {
-          this.$router.push('/news')
+          if (res.data.success === 'true') {
+            this.$message.success('登陆成功')
+            return that.$router.push('/news')
+            
+            that.$router.push('/news') 
+          } else{
+             return this.$message.error('登陆失败')
+          }
           //   this.news = res.data.list
         })
         .catch(err => {})
-      //   this.$refs.form.validate(valid => {
-      //     if (valid) {
-      //       this.logining = true
-      //       if (this.form.name === 'admin' && this.form.password === '123456') {
-      //         this.logining = true
-      //         sessionStorage.setItem('user', this.form.name)
-      //         this.$router.push('/news')
-      //       } else {
-      //         this.logining = false
-      //         this.$alert('name or password wrong!', 'info', {
-      //           confirmButtonText: 'ok'
-      //         })
-      //       }
-      //     } else {
-      //       console.log('error submit!')
-      //       return false
-      //     }
-      //   })
     },
     resetForm() {
       this.$refs.form.resetFields()

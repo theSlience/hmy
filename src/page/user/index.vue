@@ -84,7 +84,11 @@ export default {
       this.$axios
         .get('/api/message/findAll/' + this.page.pageNum)
         .then(res => {
-          this.msg = res.data.list
+          if(res.data.uAuth === 'true'){
+             this.$message.error('您已退出登陆，请重新登陆')
+             return this.$router.push('/login')
+          }
+          this.msg = res.data.date.list
           
         })
         .catch(err => {})

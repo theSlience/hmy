@@ -32,7 +32,12 @@
                 <el-table-column prop="newsTitle"
                                  label="标题"></el-table-column>
                 <el-table-column prop="newsContent"
-                                 label="内容"></el-table-column>
+                                 label="内容">
+                  <template slot-scope="scope">
+                    <div v-html="scope.row.newsContent">
+                    </div>
+                  </template>
+                </el-table-column>
                 <el-table-column label="图片">
                   <template slot-scope="scope">
                     <img :src="scope.row.img"
@@ -73,7 +78,7 @@
         <!-- 添加新闻模态框 -->
         <el-dialog title="添加/修改新闻"
                    :visible.sync="dialogVisible"
-                   width="30%">
+                   width="80%">
           <el-form ref="newsForm"
                    :model="newsForm"
                    enctype="multipart/form-data">
@@ -82,11 +87,18 @@
               <el-input v-model="newsForm.newsTitle"
                         autocomplete="off"></el-input>
             </el-form-item>
+
             <el-form-item label="内容"
                           prop="newsContent">
+              <quill-editor ref="text"
+                            v-model="newsForm.newsContent"
+                            class="myQuillEditor"
+                            :options="editorOption" />
+              <!--
               <el-input v-model="newsForm.newsContent"
                         autocomplete="off"
                         type="textarea"></el-input>
+               -->
             </el-form-item>
             <el-form-item label="图片"
                           prop="file"
@@ -127,7 +139,7 @@
         <el-dialog title="编辑新闻"
                    :visible.sync="editFormVisible"
                    :close-on-click-modal="false"
-                   width="30%">
+                   width="80%">
           <el-form :model="editForm"
                    ref="editForm">
             <el-form-item prop="newsId"></el-form-item>
@@ -138,9 +150,15 @@
             </el-form-item>
             <el-form-item label="内容"
                           prop="newsContent">
+              <quill-editor ref="text"
+                            v-model="editForm.newsContent"
+                            class="myQuillEditor"
+                            :options="editorOption" />
+              <!--
               <el-input v-model="editForm.newsContent"
                         autocomplete="off"
                         type="textarea"></el-input>
+                -->
             </el-form-item>
             <el-form-item label="图片"
                           prop="file"
@@ -172,6 +190,10 @@
 </template>
 <script>
 import axios from 'axios'
+import { quillEditor } from 'vue-quill-editor'
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
 import myHeader from '../../components/header'
 export default {
   data() {
@@ -181,6 +203,7 @@ export default {
       news: [],
       img: '',
       imgUrl: '',
+      editorOption: {},
       newsForm: {
         newsTitle: '',
         newsContent: '',
@@ -206,6 +229,7 @@ export default {
     }
   },
   components: {
+    quillEditor,
     myHeader
   },
   //   页面初始化需要进行数据渲染
@@ -222,11 +246,12 @@ export default {
       this.$axios
         .get('/api/news/findAll/' + this.page.pageNum)
         .then(res => {
-          this.news = res.data.list
-          this.page.total = res.data.total
-          //   this.$set(this.page, 'total', res.data.total)
-          //   this.$set(this.page, 'pageSize', res.data.pageSize)
-          //   this.$set(this.page, 'pageNum', res.data.pageNum)
+          if (res.data.uAuth === 'true') {
+            this.$message.error('您已退出登陆，请重新登陆')
+            return this.$router.push('/login')
+          }
+          this.news = res.data.date.list
+          this.page.total = res.data.date.total
         })
         .catch(err => {})
     },
@@ -246,6 +271,7 @@ export default {
     submitForm(formName) {
       let vm = this
       this.$refs[formName].validate(valid => {
+        console.log(valid)
         if (valid) {
           vm.$refs.upload.submit()
           this.$message.success('添加成功')
@@ -260,15 +286,11 @@ export default {
       this.imgUrl = URL.createObjectURL(file.raw)
     },
     beforeAvatarUpload(file) {
-      const isJPG = file.type === 'image/jpeg'
       const isLt4M = file.size / 1024 / 1024 < 4
-      if (!isJPG) {
-        this.$message.error('上传新闻图片只能是 JPG 格式!')
-      }
       if (!isLt4M) {
         this.$message.error('上传新闻图片大小不能超过 4MB!')
       }
-      return isJPG && isLt4M
+      return isLt4M
     },
     // 删除操作
     //根据newsId删除新闻
@@ -312,16 +334,6 @@ export default {
         newsContent: this.editForm.newsContent,
         file: this.editForm.file
       }
-      //   this.$axios
-      //     .post('/api/news/update', this.$qs.stringify(data))
-      //     .then(res => {
-      //       this.$message.success('编辑成功')
-      //       console.log(this.editForm.newsId),
-      //         console.log(this.editForm.file),
-      //         (this.editFormVisible = false)
-      //       this.getNews()
-      //     })
-      //     .catch(err => {})
       let vm = this
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -347,6 +359,7 @@ export default {
   margin: 0 auto;
 }
 .el-table .cell {
+  height: 50px;
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -394,5 +407,8 @@ export default {
 }
 .el-pagination.is-background .btn-next {
   margin: 0px;
+}
+.el-radio.is-bordered {
+  margin-right: 0px;
 }
 </style>

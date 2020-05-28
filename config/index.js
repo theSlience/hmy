@@ -10,12 +10,12 @@ module.exports = {
     autoOpenBrowser: true,
     // Paths
     assetsSubDirectory: "static",
-    assetsPublicPath: "/admin/",
+    assetsPublicPath: "/",
     // 配置反向代理解决跨域问题
     proxyTable: {
         "/api/": {
           // 调用的接口域名和端口号
-          target: "http://47.114.160.53:8081",
+          target: "http://192.168.1.108:8900",
           // 表示实现跨域
           changeOrigin: true,
           pathRewrite: {
@@ -26,8 +26,8 @@ module.exports = {
     },
 
     // Various Dev Server settings
-    host: "192.168.1.102", // can be overwritten by process.env.HOST
-    port: 8082, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    host: "192.168.1.106", // can be overwritten by process.env.HOST
+    port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,
     errorOverlay: true,
     notifyOnErrors: true,
@@ -63,7 +63,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, "../dist"),
     assetsSubDirectory: "static",
-    assetsPublicPath: "/admin/",
+    assetsPublicPath: "./",
 
     /**
      * Source Maps

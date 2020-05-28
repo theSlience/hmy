@@ -1,6 +1,8 @@
 // 引入
 import axios from "axios";
 
+axios.defaults.withCredentials=true;//让ajax携带cookie
+
 // 创建axios实例
 let service = axios.create({
   timeout: 60000
