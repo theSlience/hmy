@@ -26,7 +26,11 @@ module.exports = {
     },
 
     // Various Dev Server settings
+<<<<<<< HEAD
     host: "192.168.1.106", // can be overwritten by process.env.HOST
+=======
+    host: "192.168.1.107", // can be overwritten by process.env.HOST
+>>>>>>> d9b1719aed77b7b340589947519d6aea047dd253
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,
     errorOverlay: true,
@@ -63,7 +67,11 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, "../dist"),
     assetsSubDirectory: "static",
+<<<<<<< HEAD
     assetsPublicPath: "./",
+=======
+    assetsPublicPath: "/",
+>>>>>>> d9b1719aed77b7b340589947519d6aea047dd253
 
     /**
      * Source Maps

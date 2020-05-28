@@ -4,7 +4,7 @@
  * @Author: sueRimn
  * @Date: 2020-05-12 09:16:42
  * @LastEditors: sueRimn
- * @LastEditTime: 2020-05-19 15:15:00
+ * @LastEditTime: 2020-05-23 14:16:02
  -->
 <template>
   <div>
@@ -228,6 +228,7 @@ export default {
       }
     }
   },
+  // 引入头部组件
   components: {
     quillEditor,
     myHeader
@@ -246,12 +247,17 @@ export default {
       this.$axios
         .get('/api/news/findAll/' + this.page.pageNum)
         .then(res => {
+<<<<<<< HEAD
           if (res.data.uAuth === 'true') {
             this.$message.error('您已退出登陆，请重新登陆')
             return this.$router.push('/login')
           }
           this.news = res.data.date.list
           this.page.total = res.data.date.total
+=======
+          this.news = res.data.list
+          this.page.total = res.data.total
+>>>>>>> d9b1719aed77b7b340589947519d6aea047dd253
         })
         .catch(err => {})
     },
@@ -286,7 +292,15 @@ export default {
       this.imgUrl = URL.createObjectURL(file.raw)
     },
     beforeAvatarUpload(file) {
+<<<<<<< HEAD
       const isLt4M = file.size / 1024 / 1024 < 4
+=======
+      //   const isJPG = file.type === 'image/jpeg'
+      const isLt4M = file.size / 1024 / 1024 < 4
+      //   if (!isJPG) {
+      //     this.$message.error('上传新闻图片只能是 JPG 格式!')
+      //   }
+>>>>>>> d9b1719aed77b7b340589947519d6aea047dd253
       if (!isLt4M) {
         this.$message.error('上传新闻图片大小不能超过 4MB!')
       }
