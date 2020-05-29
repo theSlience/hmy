@@ -65,8 +65,7 @@ export default {
   methods: {
     // 退出功能
     logout() {
-      this.$axios
-        .post('/api/user/logout')
+      this.$axios.post('/api/user/logout')
       // 弹出确认对话框
       // 点击确认后，跳回用户登录页面，清除token
       this.$confirm('请确认退出？', '提示', {
@@ -106,6 +105,7 @@ h5 {
 a {
   text-decoration: none;
 }
+
 /* 头部宽高以及颜色 */
 .header {
   width: 100%;
@@ -135,6 +135,9 @@ a {
   align-items: center;
   margin-right: 50px;
   color: rgba(41, 128, 185, 1);
+}
+.header-tabs div:hover {
+  color: #000;
 }
 /* 鼠标悬停样式 */
 .header-tabs,

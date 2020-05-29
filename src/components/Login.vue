@@ -64,8 +64,6 @@ export default {
           if (res.data.success === 'true') {
             this.$message.success('登陆成功')
             return that.$router.push('/news')
-            
-            that.$router.push('/news') 
           } else{
              return this.$message.error('登陆失败')
           }

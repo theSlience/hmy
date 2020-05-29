@@ -17,6 +17,7 @@
                        icon="el-icon-plus">
               添加新闻
             </el-button>
+            <el-button :span="8">批量删除</el-button>
           </el-col>
         </el-row>
         <el-row>
@@ -76,7 +77,7 @@
                        @current-change="currentChange">
         </el-pagination>
         <!-- 添加新闻模态框 -->
-        <el-dialog title="添加/修改新闻"
+        <el-dialog title="添加新闻"
                    :visible.sync="dialogVisible"
                    width="80%">
           <el-form ref="newsForm"
@@ -247,17 +248,12 @@ export default {
       this.$axios
         .get('/api/news/findAll/' + this.page.pageNum)
         .then(res => {
-<<<<<<< HEAD
           if (res.data.uAuth === 'true') {
             this.$message.error('您已退出登陆，请重新登陆')
             return this.$router.push('/login')
           }
           this.news = res.data.date.list
           this.page.total = res.data.date.total
-=======
-          this.news = res.data.list
-          this.page.total = res.data.total
->>>>>>> d9b1719aed77b7b340589947519d6aea047dd253
         })
         .catch(err => {})
     },
@@ -292,15 +288,7 @@ export default {
       this.imgUrl = URL.createObjectURL(file.raw)
     },
     beforeAvatarUpload(file) {
-<<<<<<< HEAD
       const isLt4M = file.size / 1024 / 1024 < 4
-=======
-      //   const isJPG = file.type === 'image/jpeg'
-      const isLt4M = file.size / 1024 / 1024 < 4
-      //   if (!isJPG) {
-      //     this.$message.error('上传新闻图片只能是 JPG 格式!')
-      //   }
->>>>>>> d9b1719aed77b7b340589947519d6aea047dd253
       if (!isLt4M) {
         this.$message.error('上传新闻图片大小不能超过 4MB!')
       }

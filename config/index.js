@@ -13,16 +13,16 @@ module.exports = {
     assetsPublicPath: "/",
     // 配置反向代理解决跨域问题
     proxyTable: {
-        "/api/": {
-          // 调用的接口域名和端口号
-          target: "http://192.168.1.108:8900",
-          // 表示实现跨域
-          changeOrigin: true,
-          pathRewrite: {
-            // /api代替target里面的地址，在组件中使用时调用接口时能直接使用api代替
-            "^/api": "/"
-          }
+      "/api/": {
+        // 调用的接口域名和端口号
+        target: "http://192.168.1.108:8900",
+        // 表示实现跨域
+        changeOrigin: true,
+        pathRewrite: {
+          // /api代替target里面的地址，在组件中使用时调用接口时能直接使用api代替
+          "^/api": "/"
         }
+      }
     },
 
     // Various Dev Server settings
@@ -56,6 +56,7 @@ module.exports = {
     cssSourceMap: true
   },
 
+  // 打包配置
   build: {
     // Template for index.html
     index: path.resolve(__dirname, "../dist/index.html"),
@@ -63,9 +64,8 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, "../dist"),
     assetsSubDirectory: "static",
-    assetsPublicPath: "./",
-b340589947519d6aea047dd253
-,
+    assetsPublicPath: "/",
+
     // https://webpack.js.org/configuration/devtool/#production
     devtool: "#source-map",
 
