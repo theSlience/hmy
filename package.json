@@ -15,7 +15,7 @@
   "dependencies": {
     "@babel/core": "^7.9.6",
     "@babel/preset-env": "^7.9.6",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "element-ui": "^2.13.1",
     "font-awesome": "^4.7.0",
     "layout": "^2.2.0",
